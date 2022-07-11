@@ -3,23 +3,34 @@ import { useMutation } from "@apollo/client";
 import { GET_PROJECT } from "../queries/projectQueries";
 import { UPDATE_PROJECT } from "../mutations/projectMutations";
 
-//! NEED TO FIX THIS SHIT CODE!!!!!!
 const EditProjectForm = ({ project }) => {
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(() => {
+    switch (project.status) {
+      case "Not Started":
+        return "new";
+      case "In Progress":
+        return "progress";
+      case "Completed":
+        return "completed";
+      default:
+        throw new Error(`Unknown status: ${project.status}`);
+    }
+  });
 
   const [updateProject] = useMutation(UPDATE_PROJECT, {
     variables: { id: project.id, name, description, status },
-    // refetchQueries: [{ query: GET_PROJECT, variables: { id: project.id } }],
+    refetchQueries: [{ query: GET_PROJECT, variables: { id: project.id } }],
   });
 
   const submitHandler = (e) => {
     e.preventDefault();
 
     if (!name || !description || !status) {
-      return alert("Please fill in all fields");
+      return alert("Please fill out all fields");
     }
+
     updateProject(name, description, status);
   };
 
@@ -45,7 +56,6 @@ const EditProjectForm = ({ project }) => {
               Description
             </label>
             <textarea
-              type="text"
               className="form-control"
               id="description"
               value={description}

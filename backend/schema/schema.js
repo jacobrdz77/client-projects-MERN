@@ -39,6 +39,15 @@ const ProjectType = new GraphQLObjectType({
   }),
 });
 
+// const ProjectStatusType = new GraphQLEnumType({
+//   name: "ProjectStatus",
+//   values: {
+//     new: { value: "Not Started" },
+//     progress: { value: "In Progress" },
+//     complete: { value: "Completed" },
+//   },
+// });
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
@@ -68,15 +77,6 @@ const RootQuery = new GraphQLObjectType({
         return Client.findById(args.id);
       },
     },
-  },
-});
-
-const projectStatus = new GraphQLEnumType({
-  name: "ProjectStatus",
-  values: {
-    new: { value: "Not Started" },
-    progress: { value: "In Progress" },
-    complete: { value: "Completed" },
   },
 });
 
@@ -129,7 +129,7 @@ const mutation = new GraphQLObjectType({
             values: {
               new: { value: "Not Started" },
               progress: { value: "In Progress" },
-              complete: { value: "Completed" },
+              completed: { value: "Completed" },
             },
           }),
           defaultValue: "Not Started",
@@ -171,7 +171,7 @@ const mutation = new GraphQLObjectType({
             values: {
               new: { value: "Not Started" },
               progress: { value: "In Progress" },
-              complete: { value: "Completed" },
+              completed: { value: "Completed" },
             },
           }),
         },
