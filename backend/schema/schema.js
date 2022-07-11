@@ -71,6 +71,15 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
+const projectStatus = new GraphQLEnumType({
+  name: "ProjectStatus",
+  values: {
+    new: { value: "Not Started" },
+    progress: { value: "In Progress" },
+    complete: { value: "Completed" },
+  },
+});
+
 const mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
@@ -99,6 +108,11 @@ const mutation = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLID) },
       },
       resolve(parent, args) {
+        Project.find({ clientId: args.id }).then((projects) => {
+          projects.forEach((project) => {
+            project.remove();
+          });
+        });
         return Client.findByIdAndRemove(args.id);
         // Also delete the project
       },
@@ -137,12 +151,14 @@ const mutation = new GraphQLObjectType({
     deleteProject: {
       type: ProjectType,
       args: {
-        id: { type: GraphQLNonNull(GraphQLString) },
+        id: { type: GraphQLNonNull(GraphQLID) },
       },
       resolve(parent, args) {
         return Project.findByIdAndRemove(args.id);
       },
     },
+
+    //* Update a project
     updateProject: {
       type: ProjectType,
       args: {
